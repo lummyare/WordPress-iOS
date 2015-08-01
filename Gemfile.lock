@@ -56,6 +56,7 @@ GEM
     xcodeproj (0.24.3)
       activesupport (>= 3)
       colored (~> 1.2)
+    xcpretty (0.1.10)
 
 PLATFORMS
   ruby
@@ -64,3 +65,4 @@ DEPENDENCIES
   cocoapods (= 0.37.2)
   pry
   pry-nav
+  xcpretty
