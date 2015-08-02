@@ -2,6 +2,7 @@
 
 KEYCHAIN_REPO="${HOME}/.calabash/calabash-codesign"
 KEYCHAIN_CREATE="${KEYCHAIN_REPO}/ios/create-keychain.sh"
+IMPORT_PROFILES="${KEYCHAIN_REPO}/ios/import-profiles.sh"
 CURRENT_DIR=${PWD}
 
 if [ ! -d "${KEYCHAIN_REPO}" ]; then
@@ -32,3 +33,4 @@ fi
 cd "${PWD}"
 
 ${KEYCHAIN_CREATE}
+${IMPORT_PROFILES}
