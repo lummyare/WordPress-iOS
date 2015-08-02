@@ -4,21 +4,20 @@ all:
 
 clean:
 	rm -rf build
-	rm -rf cal-ipa
-	rm -rf cal-app
+	rm -rf Calabash-ipa
+	rm -rf Calabash-app
 
 # Builds an ipa with Calabash linked.
+# Not working - codesigning the extention fails.
 ipa-cal:
-	rm -rf cal-ipa
-	mkdir cal-ipa
+	rm -rf Calabash-ipa
 	Scripts/make/make-ipa-cal.sh
 
 # Builds an app with Calabash linked.
 app-cal:
-	rm -rf cal-app
-	mkdir cal-app
+	rm -rf Calabash-app
 	Scripts/make/make-app-cal.sh
 
-# Makes a code signing keychain for Calabash targets
+# Makes a code signing keychain for Calabash targets.
 keychain:
 	Scripts/make/make-keychain.sh
