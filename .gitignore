@@ -57,3 +57,7 @@ WordPress/WordPress.xcodeproj/xcuserdata
 WordPress/InfoPlist.h
 # coverage.py
 */CoverageData/*
+
+# Calabash
+Calabash-app
+Calabash-ipa
