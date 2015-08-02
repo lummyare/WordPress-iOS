@@ -3,39 +3,36 @@
 bundle
 
 make keychain
-
 KEYCHAIN="${HOME}/.calabash/calabash-codesign/ios/Calabash.keychain"
+IDENTITY=`xcrun security find-identity -v -p codesigning ${KEYCHAIN} | awk 'match($0, /\"iPhone Developer: .+\"/) { print substr($0, RSTART, RLENGTH)}' | tr -d '\n'`
 
-#xcrun security \
-#  find-identity \
-#  -v -p codesigning \
-#  "${PWD}/Calabash.keychain" | \
-#  awk 'match($0, /\"iPhone Developer: .+\"/) { print substr($0, RSTART, RLENGTH)}' \
-#  | tr -d '\n'
-
-
-
-CODE_SIGN_IDENTITY=`xcrun security find-identity -v -p codesigning ${KEYCHAIN} | awk 'match($0, /\"iPhone Developer: .+\"/) { print substr($0, RSTART, RLENGTH)}' | tr -d '\n'`
+PRODUCT_DIR=./Calabash-ipa
+rm -rf ${PRODUCT_DIR}
+mkdir -p ${PRODUCT_DIR}
 
 WORKSPACE="WordPress.xcworkspace"
 SCHEME="WordPress"
 TARGET_NAME="WordPress"
+CONFIG=Calabash
 
 CAL_DISTRO_DIR="${PWD}/build"
 ARCHIVE_BUNDLE="${CAL_DISTRO_DIR}/WordPress.xcarchive"
 APP_BUNDLE_PATH="${ARCHIVE_BUNDLE}/Products/Applications/WordPress.app"
 IPA_PATH="${CAL_DISTRO_DIR}/${TARGET_NAME}.ipa"
 DSYM_PATH="${ARCHIVE_BUNDLE}/dSYMs/${TARGET_NAME}.app.dSYM"
-CONFIG=Debug
 
 rm -rf "${CAL_DISTRO_DIR}"
 mkdir -p "${CAL_DISTRO_DIR}"
 
 set +o errexit
 
+# Fails because the app extension does not pick up the
+# code siging details that are passed.
+#
+# See CALABASH_README.md for details.
 xcrun xcodebuild archive \
-  CODE_SIGN_IDENTITY="${RISEUP_SIGNING_IDENTITY}" \
   OTHER_CODE_SIGN_FLAGS="--keychain ${KEYCHAIN}" \
+  CODE_SIGN_IDENTITY="${IDENTITY}" \
   -SYMROOT="${CAL_DISTRO_DIR}" \
   -derivedDataPath "${CAL_DISTRO_DIR}" \
   -workspace "${WORKSPACE}" \
@@ -45,9 +42,11 @@ xcrun xcodebuild archive \
   VALID_ARCHS="arm64 armv7 armv7s" \
   ONLY_ACTIVE_ARCH=NO \
   -archivePath "${ARCHIVE_BUNDLE}" \
-  -sdk iphoneos | xcpretty -c
+  -sdk iphoneos
 
-RETVAL=${PIPESTATUS[0]}
+  #-sdk iphoneos | bundle exec xcpretty -c
+#RETVAL=${PIPESTATUS[0]}
+RETVAL=$?
 
 set -o errexit
 
@@ -80,9 +79,6 @@ xcrun zip \
 
 cd "${CURRENT_DIR}"
 
-PRODUCT_DIR=./ipa-cal
-
-mkdir -p ${PRODUCT_PATH}
 
 cp "${IPA_PATH}" "${PRODUCT_PATH}"
 echo "INFO: Created ${PRODUCT_PATH}/${TARGET_NAME}.ipa"
